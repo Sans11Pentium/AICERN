@@ -10,16 +10,18 @@ app = Flask(__name__)
 # Configuration
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'csv', 'xlsx'}
-GROQ_API_KEY = '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'
-GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions'
+app.config['GROQ_API_KEY'] = os.getenv('GROQ_API_KEY')
+app.config['GROQ_API_URL'] = os.getenv('GROQ_API_URL')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def analyze_sentiment(review):
+    api_key = app.config.get('GROQ_API_KEY')
+    api_url = app.config.get('GROQ_API_URL')
     headers = {
-        'Authorization': f'Bearer {GROQ_API_KEY}',
+        'Authorization': f'Bearer {api_key}',
         'Content-Type': 'application/json'
     }
     data = {
@@ -32,7 +34,7 @@ def analyze_sentiment(review):
     }
     
     try:
-        response = requests.post(GROQ_API_URL, headers=headers, json=data)
+        response = requests.post(api_url, headers=headers, json=data)
         
         if response.status_code == 429:  # Rate limit hit
             return 'rate_limit_error'
