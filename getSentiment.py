@@ -4,6 +4,9 @@ from flask import Flask, request, jsonify
 import pandas as pd
 import os
 from werkzeug.utils import secure_filename
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
